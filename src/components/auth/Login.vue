@@ -1,14 +1,15 @@
 <template>
-    <div>
+    <form @submit.prevent="login">
         <div>
             <label for="email">Email: </label>
             <input type="text" id="email" v-model="loginData.email">
         </div>
         <div>
-            <label for="email">Email: </label>
-            <input type="text" id="email" v-model="loginData.email">
+            <label for="password">Hasło: </label>
+            <input type="password" id="password" v-model="loginData.password">
         </div>
-    </div>
+        <button type="submit">Zaloguj się </button>
+    </form>
 </template>
 
 <script>
@@ -24,8 +25,8 @@
             }
         },
         watch: {
-            logged () {
-                this.$router.push({path: '/roles'})
+            logged() {
+                this.$router.push({path: '/'})
             }
         },
         computed: {

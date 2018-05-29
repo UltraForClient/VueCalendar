@@ -1,7 +1,7 @@
 <template>
-    <div class="home">
+    <v-content>
         <Calendar/>
-    </div>
+    </v-content>
 </template>
 
 <script>
@@ -13,3 +13,15 @@
         }
     }
 </script>
+
+<style scoped>
+    #keep main .container {
+        height: 660px;
+    }
+    .navigation-drawer__border {
+        display: none;
+    }
+    .text {
+        font-weight: 400;
+    }
+</style>

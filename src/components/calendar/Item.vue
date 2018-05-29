@@ -1,28 +1,31 @@
 <template>
-    <div class="cell">
-        <div @click="add">
-            <h3>{{ day }}</h3>
-            <ul>
-                <li v-for="task in tasksList" @click.stop="edit(task)">
-                    <h4>{{ task.title }}</h4>
-                    <h5 v-html="formatDate(task)"></h5>
-                    <p>{{ task.description }}</p>
-                </li>
-            </ul>
-        </div>
+    <div class="cell" @click="add()">
+        <h3>{{ day }}</h3>
+        <v-list v-if="tasksList.length">
+            <v-list-tile avatar v-for="task in tasksList" :key="task.title" @click.stop="edit(task)">
+                <v-list-tile-content>
+                    <v-list-tile-title v-text="task.title"></v-list-tile-title>
+                    <v-list-tile-sub-title v-html="formatDate(task)"></v-list-tile-sub-title>
+                </v-list-tile-content>
+            </v-list-tile>
+        </v-list>
 
-        <Manage :dialog="dialog"/>
+        <Manage
+                :dialog="dialog"
+                :userList="userList"
+        />
     </div>
 </template>
 
 <script>
     import moment from 'moment';
-    import Manage from './Manage.vue'
+    import Manage from './Manage.vue';
+
     export default {
         components: {
             Manage
         },
-        props: ['calendar', 'tasks'],
+        props: ['calendar', 'tasks', 'items', 'userList'],
         name: "Item",
         data () {
             return {
@@ -42,12 +45,13 @@
                 let startDate = moment(task.start_date);
                 let endDate   = moment(task.end_date);
 
-                return startDate.format('HH:MM') + '-' + endDate.format('HH:MM');
+                return startDate.format('YYYY:MM:DD HH:MM') + '-' + endDate.format('YYYY:MM:DD HH:MM');
             }
         },
         created() {
             this.day = this.$store.state.dayIterator;
-            this.tasksList = this.tasks(this.day);
+
+            this.tasksList = this.tasks(this.day, this.items);
             this.$store.state.dayIterator++;
         }
     }

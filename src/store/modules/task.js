@@ -7,7 +7,8 @@ const state = {
 };
 
 const getters = {
-    tasks: state => state.tasks,
+    tasksGet: state => state.tasks.Get,
+    tasksGive: state => state.tasks.Give,
     task: state => state.task,
     refreshTask: state => state.refreshTask,
 };
@@ -17,14 +18,32 @@ const actions = {
         Vue.http.get('tasks/my-tasks/' + data)
             .then(response => response.json())
             .then(result => {
-                commit('TASKS', result.Get)
+                const give = [];
+                Object.keys(result['Give']).map(key => {
+                    give.push(result['Give'][key]);
+                });
+
+                const get = [];
+                Object.keys(result['Get']).map(key => {
+                    get.push(result['Get'][key]);
+                });
+
+                const newTask = {
+                    'Give': give,
+                    'Get': get
+                };
+                commit('TASKS', newTask);
             })
     },
     task({commit}, data) {
 
     },
     createTask({commit}, data) {
-
+        Vue.http.post('tasks', data)
+            .then(response => response.json())
+            .then(result => {
+                commit('REFRESHTASK');
+            })
     },
     updateTask({commit}, data) {
 
@@ -41,8 +60,8 @@ const mutations = {
     TASK(state, task) {
         state.task = task;
     },
-    REFRESHTASK(state, tasks) {
-        state.tasks = tasks;
+    REFRESHTASK(state) {
+        state.refreshTask = ++state.refreshTask;
     }
 };
 

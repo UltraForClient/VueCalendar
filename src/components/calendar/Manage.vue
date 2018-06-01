@@ -1,5 +1,5 @@
 <template>
-    <v-dialog v-model="show" persistent max-width="800px">
+    <v-dialog v-model="show" persistent max-width="800px" color="red">
         <v-card>
             <v-card-title>
                 <span class="headline">Dodaj nowe zadanie</span>
@@ -13,12 +13,12 @@
                             <span class="headline">Czas rozpoczęcia</span>
                         </v-card-title>
                         <v-date-picker
-                                v-model="task.end_date_date"
+                                v-model="task.start_date_date"
                                 locale="pl"
                                 :allowed-dates="allowedDates"
                         />
 
-                        <v-time-picker v-model="task.end_date_time" format="24hr"/>
+                        <v-time-picker v-model="task.start_date_time" format="24hr"/>
                     </v-card-text>
                     <v-card-text>
                         <v-card-title>
@@ -27,37 +27,58 @@
                         <v-flex>
 
                             <v-date-picker
-                                    v-model="task.start_date_date"
+                                    v-model="task.end_date_date"
                                     locale="pl"
                                     :allowed-dates="allowedDates"
                             />
 
-                            <v-time-picker v-model="task.start_date_time" format="24hr"/>
+                            <v-time-picker v-model="task.end_date_time" format="24hr"/>
                         </v-flex>
                     </v-card-text>
                 </v-container>
                 <small>*Pola wymagane</small>
             </v-card-text>
+            <v-card-title>
+                <span class="headline">Przypisz do użytkowników</span>
+            </v-card-title>
+            <v-list>
+                <v-list-group no-action>
+                    <v-list-tile slot="activator">
+                        <v-list-tile-content>
+                            <v-list-tile-title>Użytkownicy</v-list-tile-title>
+                        </v-list-tile-content>
+                    </v-list-tile>
+                    <v-list-tile>
+                        <v-text-field solo-inverted flat label="Search" prepend-icon="search" v-model="search"></v-text-field>
+                    </v-list-tile>
+                    <v-list-tile v-for="item in filteredList" @click="">
+                        <v-list-tile-action>
+                            <v-icon>person_pin</v-icon>
+                        </v-list-tile-action>
+                        <v-list-tile-content>
+                            <v-checkbox v-model="task.user_id" :label="item.name + ' ' + item.email" :value="item.id"></v-checkbox>
+                        </v-list-tile-content>
+                    </v-list-tile>
+                </v-list-group>
+            </v-list>
+            <v-card-title>
+                <span class="headline">Priorytet zadania</span>
+            </v-card-title>
+            <v-radio-group v-model="task.priority" :mandatory="false">
+                <v-radio
+                        :label="'Prorytet ' + item.name"
+                        :value="item.number"
+                        :color="item.color"
+                        v-if="item.id !== id"
+                        v-for="item in priority"
+                ></v-radio>
+            </v-radio-group>
             <v-card-actions>
                 <v-spacer></v-spacer>
                 <v-btn color="blue darken-1" flat @click.native="dialog = false">Zamknij</v-btn>
-                <v-btn color="blue darken-1" flat @click.native="dialog = false">Zapisz</v-btn>
+                <v-btn color="blue darken-1" flat @click="save">Zapisz</v-btn>
             </v-card-actions>
-            <v-list three-line subheader>
-                <v-list-tile v-for="item in userList" href="javascript:;">
-                    <v-list-tile-action>
-                        <v-checkbox v-model="item.selected"></v-checkbox>
-                    </v-list-tile-action>
-                    <v-list-tile-content @click="item.selected = !item.selected">
-                        <v-list-tile-title>{{ item.name }} {{ item.selected }}</v-list-tile-title>
-                        <v-list-tile-sub-title>{{ item.email }}</v-list-tile-sub-title>
-                    </v-list-tile-content>
-                </v-list-tile>
-            </v-list>
         </v-card>
-        <pre>
-            {{ userList }}
-        </pre>
     </v-dialog>
 </template>
 
@@ -66,6 +87,7 @@
         props: ['dialog', 'userList'],
         data () {
             return {
+                search: '',
                 show: false,
                 task: {
                     title: '',
@@ -74,34 +96,66 @@
                     start_date_date: null,
                     end_date_time: null,
                     end_date_date: null,
+                    user_id: [],
+                    priority: 1
                 },
-                test: false
+                priority: [
+                    {
+                        name: 'niski',
+                        color: 'green',
+                        number: 1
+                    },
+                    {
+                        name: 'średni',
+                        color: 'yellow',
+                        number: 2
+                    },
+                    {
+                        name: 'wysoki',
+                        color: 'red',
+                        number: 3
+                    }
+                ],
+                id: localStorage.getItem('userId')
             }
         },
         watch: {
-            dialog () {
+            dialog() {
                 this.show = this.dialog
-            },
+            }
+        },
+        computed: {
+            filteredList() {
+                return this.userList.filter(user => {
+                    return user.name.toLowerCase().includes(this.search.toLowerCase())
+                })
+            }
         },
         methods: {
             allowedDates: val => {
                 return Date.parse(val) >= (Date.parse(new Date()) - 86400000);
             },
-            prepareUser() {
-                this.userList.forEach(user => user.selected = false)
+            save() {
+                this.dialog = false;
+                const data = {
+                    title: this.task.title,
+                    description: this.task.description,
+                    start_date: this.task.start_date_date + ' ' + this.task.start_date_time,
+                    end_date: this.task.end_date_date + ' ' + this.task.end_date_time,
+                    priority: this.task.priority,
+                    user_get_id: this.task.user_id,
+                    user_give_id: localStorage.getItem('userId')
+                };
+
+                this.$store.dispatch('createTask', data);
             }
-        },
-        created() {
-            this.prepareUser();
         }
     }
 </script>
 
 <style>
-    /*.picker--time .picker__title {*/
-        /*padding: 9px;*/
-    /*}*/
     .picker.picker--time.card {
         margin-left: 15%;
     }
 </style>
+

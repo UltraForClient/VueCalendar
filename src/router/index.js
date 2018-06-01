@@ -1,10 +1,12 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 
-import Home from '../views/Home.vue';
-import About from '../views/Auth.vue';
-
 Vue.use(Router);
+
+import Home from '@/views/Home.vue';
+import About from '@/views/Auth.vue';
+
+import Calendar from '@/components/calendar/Calendar.vue'
 
 export default new Router({
     mode: 'history',
@@ -14,7 +16,15 @@ export default new Router({
             name: 'home',
             component: Home,
             children: [
-
+                {
+                    path: '/calendar/give-task',
+                    name: 'calendar-give-task',
+                    component: Calendar
+                },
+                {
+                    path: '/list/give-task',
+                    name: 
+                }
             ]
         },
         {

@@ -80,14 +80,8 @@
             },
             ...mapGetters({
                 tasks: 'tasksGive',
-                userList: 'userList',
-                refreshTask: 'refreshTask'
+                userList: 'userList'
             })
-        },
-        watch: {
-            refreshTask() {
-                this.$store.dispatch('tasks', localStorage.getItem('userId'));
-            }
         },
         methods: {
             isTask(day, tasks) {

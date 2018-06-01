@@ -33,9 +33,9 @@
                 drawer: null,
                 items: [
                     { icon: 'settings', text: 'Kalendarz zadanych zadań', path: '/calendar/give-task' },
-                    { icon: 'settings', text: 'Kalendarz zadanych zadań', path: '/calendar/get-task' },
-                    { icon: 'settings', text: 'Kalendarz zadanych zadań', path: '/list/give-task' },
-                    { icon: 'settings', text: 'Kalendarz zadanych zadań', path: '/list/get-task' }
+                    { icon: 'settings', text: 'Kalendarz twoich zadań', path: '/calendar/get-task' },
+                    { icon: 'settings', text: 'Lista zadanych zadań', path: '/list/give-task' },
+                    { icon: 'settings', text: 'Lista twoich zadań', path: '/list/get-task' }
                 ]
             }
         },

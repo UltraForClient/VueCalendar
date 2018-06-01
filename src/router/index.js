@@ -7,6 +7,7 @@ import Home from '@/views/Home.vue';
 import About from '@/views/Auth.vue';
 
 import Calendar from '@/components/calendar/Calendar.vue'
+import List from '@/components/calendar/List.vue'
 
 export default new Router({
     mode: 'history',
@@ -23,7 +24,8 @@ export default new Router({
                 },
                 {
                     path: '/list/give-task',
-                    name: 
+                    name: 'list-give-task',
+                    component: List
                 }
             ]
         },

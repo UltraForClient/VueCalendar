@@ -32,6 +32,8 @@ const actions = {
                     'Give': give,
                     'Get': get
                 };
+
+                console.log(give);
                 commit('TASKS', newTask);
             })
     },

@@ -51,12 +51,12 @@
                     <v-list-tile>
                         <v-text-field solo-inverted flat label="Search" prepend-icon="search" v-model="search"></v-text-field>
                     </v-list-tile>
-                    <v-list-tile v-for="item in filteredList" @click="">
+                    <v-list-tile v-for="user in filteredList" @click="">
                         <v-list-tile-action>
                             <v-icon>person_pin</v-icon>
                         </v-list-tile-action>
                         <v-list-tile-content>
-                            <v-checkbox v-model="task.user_id" :label="item.name + ' ' + item.email" :value="item.id"></v-checkbox>
+                            <v-checkbox v-model="task.user_id" :label="user.name + ' ' + user.email" :value="user.id"></v-checkbox>
                         </v-list-tile-content>
                     </v-list-tile>
                 </v-list-group>
@@ -84,7 +84,7 @@
 
 <script>
     export default {
-        props: ['dialog', 'userList'],
+        props: ['dialog', 'userList', 'editTask'],
         data () {
             return {
                 search: '',
@@ -121,7 +121,23 @@
         },
         watch: {
             dialog() {
-                this.show = this.dialog
+                this.show = this.dialog;
+
+                if(this.editTask) {
+                    const startDate = this.editTask.start_date.split(' ');
+                    const endDate = this.editTask.end_date.split(' ');
+
+                    this.task = {
+                        title: this.editTask.title,
+                        description: this.editTask.description,
+                        start_date_date: startDate[0],
+                        start_date_time: startDate[1],
+                        end_date_date: endDate[0],
+                        end_date_time: endDate[1],
+                        user_id: Object.values(this.editTask.pivot.user_get_id),
+                        priority: this.editTask.priority
+                    };
+                }
             }
         },
         computed: {
